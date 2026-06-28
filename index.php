@@ -242,7 +242,7 @@ header.scrolled {
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   transition: all var(--transition);
-  color: var(--cream);
+  display: flex; align-items: center; justify-content: center;
 }
 .social-icon:hover {
   border-color: var(--gold);
@@ -323,6 +323,7 @@ header.scrolled {
   color: var(--cream-dim);
   position: relative;
   z-index: 5;
+  margin-top: 152px; /* fallback before JS measures the real header height */
 }
 .showcase-note strong { color: var(--gold); font-weight: 500; }
 
@@ -1085,6 +1086,7 @@ footer::before{
   .nav-right .social-icon { display: none; }
   .nav-cta { display: none; }
   .logo-badge img { height: 44px; }
+  .showcase-note { margin-top: 90px; }
   .hero { grid-template-columns: 1fr; min-height: auto; }
   .hero-content { padding: 40px 24px 50px; }
   .hero-visual { display: none; }
@@ -1123,28 +1125,46 @@ header.scrolled {
 }
 
 .logo-badge {
-  background: rgba(184,134,11,0.08);
+  background: transparent;
   border-color: rgba(184,134,11,0.15);
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .logo-badge:hover {
-  background: rgba(184,134,11,0.12);
+  background: transparent;
   border-color: rgba(184,134,11,0.2);
 }
 
-.social-icon {
+.welcome-photo {
+  aspect-ratio: 16/10;
+  background: linear-gradient(160deg, #1A0F18 0%, #2D1520 50%, #0F1A14 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-badge:hover {
+  background: transparent;
   border-color: rgba(184,134,11,0.2);
-  color: #1F1A15;
 }
 
-.social-icon:hover {
-  border-color: #B8860B;
-  color: #B8860B;
-  background: rgba(184,134,11,0.08);
+.welcome-photo {
+  aspect-ratio: 16/10;
+  background: linear-gradient(160deg, #1A0F18 0%, #2D1520 50%, #0F1A14 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
 }
-
-.hero::before {
+.welcome-photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
     radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 35%),
     radial-gradient(ellipse 60% 80% at 70% 50%, rgba(168,56,94,0.12) 0%, transparent 60%),
@@ -1475,9 +1495,233 @@ footer::before {
 .whatsapp-big:hover {
   box-shadow: 0 14px 40px rgba(31,156,79,0.25);
 }
+
+/* =========================================
+   WELCOME POPUP (shop photo + location)
+   Added — uses this file's existing variables,
+   nothing above this point was changed.
+   ========================================= */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(20,16,10,0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease-silk), visibility 0.4s;
+}
+.welcome-overlay.show { opacity: 1; visibility: visible; }
+
+.welcome-modal {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.35), 0 0 0 1px rgba(184,134,11,0.12);
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.45s var(--ease-silk);
+  overflow: hidden;
+}
+.welcome-overlay.show .welcome-modal { transform: translateY(0) scale(1); }
+
+.welcome-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s var(--ease-silk);
+}
+.welcome-close:hover { background: var(--crimson); border-color: var(--crimson); color: #fff; transform: rotate(90deg); }
+
+.welcome-photo .placeholder-icon {
+  width: 56px; height: 56px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  position: relative; z-index: 1;
+  background: rgba(255,255,255,0.5);
+}
+.welcome-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  object-position: center top;
+  z-index: 1;
+}
+.welcome-photo p { position: relative; z-index: 1; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; }
+
+.welcome-logo-chip {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 6px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  z-index: 2;
+}
+.welcome-logo-chip img { height: 28px; width: auto; }
+
+.welcome-body { padding: 26px 28px 28px; text-align: center; }
+.welcome-eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.welcome-title {
+  font-family: var(--ff-display);
+  font-size: 1.6rem;
+  color: var(--cream);
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+.welcome-title em { color: var(--gold-lt); font-style: italic; }
+.welcome-desc {
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+.welcome-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--cream-dim);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  margin-bottom: 20px;
+}
+.welcome-location strong { color: var(--gold); font-weight: 500; }
+.welcome-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.welcome-actions a { flex: 1; min-width: 150px; justify-content: center; padding: 12px 18px; font-size: 0.65rem; }
+
+@media (max-width: 480px) {
+  .welcome-actions { flex-direction: column; }
+  .welcome-actions a { min-width: 0; }
+}
+
+/* =========================================
+   REAL IMAGE SUPPORT (Added)
+   Every spot below already has a path you can
+   replace. If the file isn't found yet, the
+   original placeholder shows automatically —
+   nothing breaks while you're adding photos.
+   ========================================= */
+
+/* Hero photo */
+.hero-img-placeholder img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-img-placeholder .placeholder-fallback {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Collection cards */
+.card-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.card-img::before { display: none; } /* old text-only placeholder, replaced by .card-img-fallback below */
+.card-img-fallback {
+  display: none;
+  position: relative;
+  z-index: 1;
+  font-size: 0.63rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 10px 18px;
+  text-align: center;
+}
+
+/* Product photos */
+.product-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.product-img-inner { display: none; position: relative; z-index: 1; }
+
+/* Instagram tiles */
+.insta-tile::after { display: none; } /* old camera-emoji placeholder, replaced by .insta-tile-fallback below */
+.insta-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.insta-tile-fallback {
+  display: none;
+  font-size: 1.4rem;
+  opacity: 0.3;
+}
 </style>
 </head>
 <body>
+
+<!-- ======== WELCOME POPUP (shop photo + location) — Added ======== -->
+<div class="welcome-overlay" id="welcomePopup" role="dialog" aria-modal="true" aria-label="Welcome popup">
+  <div class="welcome-modal">
+    <button class="welcome-close" id="welcomeClose" aria-label="Close popup">&times;</button>
+    <div class="welcome-photo">
+      <img src="assets/shop.png" alt="Bin Shahzad Fashions shop front" onerror="this.style.display='none'; this.parentElement.querySelector('.welcome-fallback').style.display='flex';">
+      <div class="welcome-fallback" style="display:none; position:relative; z-index:1; flex-direction:column; align-items:center; gap:10px;">
+        <div class="placeholder-icon">🏬</div>
+        <p>Shop Front Photo</p>
+      </div>
+      <div class="welcome-logo-chip"><img src="images/logo.png" alt="Bin Shahzad Fashions logo"></div>
+    </div>
+    <div class="welcome-body">
+      <div class="welcome-eyebrow">Welcome to</div>
+      <h2 class="welcome-title"><?= $config['brand_name'] ?> <?= $config['brand_name2'] ?><br><em>Sharjah, UAE</em></h2>
+      <p class="welcome-desc">Authentic Pakistani brands & our own signature designs — shalwar kameez, Eid & Ramadan wear, bridal and event dresses.</p>
+      <div class="welcome-location">📍 Visit us at <strong><?= $config['location'] ?></strong></div>
+      <div class="welcome-actions">
+        <a href="https://wa.me/<?= $config['whatsapp'] ?>?text=Hi Bin Shahzad Fashions! I just visited your website." target="_blank" rel="noopener" class="btn-primary">WhatsApp Us</a>
+        <a href="#contact" id="welcomeViewLocation" class="btn-outline">View Location</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ======== ANNOUNCEMENT BAR ======== -->
 <div class="announce-bar" role="banner" aria-label="Announcement">
@@ -1529,7 +1773,7 @@ footer::before {
 </header>
 
 <!-- Showcase note -->
-<div class="showcase-note" style="margin-top:84px">
+<div class="showcase-note" id="showcaseNote">
   This website is a <strong>showcase catalog</strong> — to place an order, message us on <strong>WhatsApp</strong> or visit our store in Sharjah.
 </div>
 
@@ -1582,9 +1826,13 @@ footer::before {
   <div class="hero-visual" aria-hidden="true">
     <div class="hero-img-frame">
       <div class="hero-img-placeholder">
-        <div class="placeholder-icon">👗</div>
-        <p>Store / Eid Collection Photo</p>
-        <p style="font-size:0.6rem;opacity:0.5">Replace with your own photo</p>
+        <img src="assets/hero-photo.jpg" alt="Bin Shahzad Fashions store"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="placeholder-fallback">
+          <div class="placeholder-icon">👗</div>
+          <p>Store / Eid Collection Photo</p>
+          <p style="font-size:0.6rem;opacity:0.5">Replace with your own photo</p>
+        </div>
       </div>
       <div class="floating-badge">
         <div class="badge-num">Eid</div>
@@ -1654,7 +1902,10 @@ footer::before {
 
   <div class="collections-grid">
     <div class="collection-card reveal reveal-delay-1">
-      <div class="card-img" data-label="Eid Collection">
+      <div class="card-img">
+        <img src="assets/collections/eid.jpg" alt="Eid Collection"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="card-img-fallback">Eid Collection</div>
         <div class="card-img-overlay"></div>
       </div>
       <div class="card-content">
@@ -1665,7 +1916,11 @@ footer::before {
     </div>
 
     <div class="collection-card reveal reveal-delay-2">
-      <div class="card-img" data-label="Shalwar Kameez"></div>
+      <div class="card-img">
+        <img src="assets/collections/shalwar-kameez.jpg" alt="Shalwar Kameez"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="card-img-fallback">Shalwar Kameez</div>
+      </div>
       <div class="card-content">
         <div class="card-cat">Everyday Essential</div>
         <h3 class="card-title">Shalwar Kameez</h3>
@@ -1674,7 +1929,11 @@ footer::before {
     </div>
 
     <div class="collection-card reveal reveal-delay-3">
-      <div class="card-img" data-label="Bridal & Event"></div>
+      <div class="card-img">
+        <img src="assets/collections/bridal-event.jpg" alt="Bridal & Event Wear"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="card-img-fallback">Bridal & Event</div>
+      </div>
       <div class="card-content">
         <div class="card-cat">Special Occasions</div>
         <h3 class="card-title">Bridal & Event Wear</h3>
@@ -1683,7 +1942,11 @@ footer::before {
     </div>
 
     <div class="collection-card reveal reveal-delay-2">
-      <div class="card-img" data-label="Bin Shahzad Originals"></div>
+      <div class="card-img">
+        <img src="assets/collections/originals.jpg" alt="Bin Shahzad Originals"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="card-img-fallback">Bin Shahzad Originals</div>
+      </div>
       <div class="card-content">
         <div class="card-cat">Our Own Label</div>
         <h3 class="card-title">Signature Originals</h3>
@@ -1692,7 +1955,11 @@ footer::before {
     </div>
 
     <div class="collection-card reveal reveal-delay-3">
-      <div class="card-img" data-label="Kids Eid Wear"></div>
+      <div class="card-img">
+        <img src="assets/collections/kids-eid.jpg" alt="Kids Eid Wear"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="card-img-fallback">Kids Eid Wear</div>
+      </div>
       <div class="card-content">
         <div class="card-cat">Little Ones</div>
         <h3 class="card-title">Kids Collection</h3>
@@ -1715,14 +1982,16 @@ footer::before {
   <div class="products-grid">
     <?php
     $products = [
-      ['name'=>'Eid Signature Set','brand'=>'Bin Shahzad Originals','fabric'=>'Embroidered Lawn 3-Piece','price'=>'From AED 195','badge'=>'Bestseller'],
-      ['name'=>'Gul Ahmed Summer Lawn','brand'=>'Gul Ahmed','fabric'=>'Unstitched 3-Piece','price'=>'From AED 175','badge'=>'Restocked'],
-      ['name'=>'Ramadan Embroidered Suit','brand'=>'Sana Safinaz','fabric'=>'Muzlin Unstitched','price'=>'From AED 320','badge'=>'Eid Special'],
-      ['name'=>'Khaadi Ready-to-Wear','brand'=>'Khaadi','fabric'=>'Stitched Pret','price'=>'From AED 250','badge'=>'Popular'],
+      ['name'=>'Eid Signature Set','brand'=>'Bin Shahzad Originals','fabric'=>'Embroidered Lawn 3-Piece','price'=>'From AED 195','badge'=>'Bestseller','image'=>'assets/products/eid-signature-set.jpg'],
+      ['name'=>'Gul Ahmed Summer Lawn','brand'=>'Gul Ahmed','fabric'=>'Unstitched 3-Piece','price'=>'From AED 175','badge'=>'Restocked','image'=>'assets/products/gul-ahmed-summer-lawn.jpg'],
+      ['name'=>'Ramadan Embroidered Suit','brand'=>'Sana Safinaz','fabric'=>'Muzlin Unstitched','price'=>'From AED 320','badge'=>'Eid Special','image'=>'assets/products/ramadan-embroidered-suit.jpg'],
+      ['name'=>'Khaadi Ready-to-Wear','brand'=>'BSF','fabric'=>'Stitched Pret','price'=>'From AED 250','badge'=>'Popular','image'=>'assets/products/khaadi-ready-to-wear.jpg'],
     ];
     foreach($products as $i => $p): ?>
     <div class="product-card reveal reveal-delay-<?= $i+1 ?>">
       <div class="product-img">
+        <img src="<?= $p['image'] ?>" alt="<?= htmlspecialchars($p['name']) ?>"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <div class="product-img-inner">
           <div style="font-size:2rem;margin-bottom:8px">👗</div>
           <div><?= $p['name'] ?></div>
@@ -1832,11 +2101,27 @@ footer::before {
     <p style="color:var(--cream-dim);font-size:0.88rem;margin-top:12px">Tag us in your looks for a feature on our page</p>
   </div>
   <div class="social-strip-grid reveal" style="margin-top:46px">
-    <?php for($i=0;$i<6;$i++): ?>
-    <a class="insta-tile" href="<?= $config['instagram'] ?>" target="_blank" rel="noopener" aria-label="Instagram post <?= $i+1 ?>">
-      <img src="assets/insta-placeholder-<?= $i+1 ?>.png" alt="Instagram placeholder <?= $i+1 ?>">
+    <?php
+    // Add a real    post URL + downloaded photo for each tile below.
+    // Instagram blocks hotlinking images directly from post URLs, so:
+    //   1. Open the post on instagram.com
+    //   2. Right-click the photo -> Save Image As... -> save into /assets/instagram/
+    //   3. Paste the post's URL (instagram.com/p/XXXXXXX/) into 'link' below
+    $instagram_posts = [
+      ['image' => 'assets/instagram/post-1.jpg', 'link' => 'https://www.instagram.com/p/DZuGNhFoTWs//'],
+      ['image' => 'assets/instagram/post-2.jpg', 'link' => 'https://www.instagram.com/p/DYaTSqxMPqS/'],
+      ['image' => 'assets/instagram/post-3.jpg', 'link' => 'https://www.instagram.com/p/DVhQJUVjAs0/'],
+      ['image' => 'assets/instagram/post-4.jpg', 'link' => 'https://www.instagram.com/p/DZ9eWWFIXLR/'],
+      ['image' => 'assets/instagram/post-5.jpg', 'link' => 'https://www.instagram.com/p/DaADjYSMntz/'],
+      ['image' => 'assets/instagram/post-6.jpg', 'link' => 'https://www.instagram.com/p/DZ2r5jgs7RJ/'],
+    ];
+    foreach($instagram_posts as $i => $post): ?>
+    <a class="insta-tile" href="<?= $post['link'] ?>" target="_blank" rel="noopener" aria-label="Instagram post <?= $i+1 ?>">
+      <img src="<?= $post['image'] ?>" alt="Instagram post <?= $i+1 ?>"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="insta-tile-fallback">📷</div>
     </a>
-    <?php endfor; ?>
+    <?php endforeach; ?>
   </div>
   <div style="text-align:center;margin-top:28px" class="reveal">
     <a href="<?= $config['instagram'] ?>" target="_blank" rel="noopener" class="btn-outline" style="display:inline-flex;padding:12px 28px">
@@ -2011,6 +2296,16 @@ footer::before {
 const header = document.getElementById('main-header');
 window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 60); }, { passive: true });
 
+// ======== Fix header overlap (Added) — header height changes with screen size,
+// so we measure it for real instead of guessing a fixed pixel number ========
+const showcaseNote = document.getElementById('showcaseNote');
+function fixHeaderOverlap() {
+  showcaseNote.style.marginTop = header.offsetHeight + 'px';
+}
+fixHeaderOverlap();
+window.addEventListener('resize', fixHeaderOverlap);
+window.addEventListener('load', fixHeaderOverlap);
+
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
 hamburger.addEventListener('click', () => {
@@ -2045,6 +2340,34 @@ const observer  = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
 }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
 revealEls.forEach(el => observer.observe(el));
+
+// ======== Welcome popup (Added) — shows every time the page loads ========
+const welcomePopup        = document.getElementById('welcomePopup');
+const welcomeClose         = document.getElementById('welcomeClose');
+const welcomeViewLocation  = document.getElementById('welcomeViewLocation');
+
+function openWelcomePopup() {
+  welcomePopup.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeWelcomePopup() {
+  welcomePopup.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+setTimeout(openWelcomePopup, 350);
+
+welcomeClose.addEventListener('click', closeWelcomePopup);
+
+welcomePopup.addEventListener('click', (e) => {
+  if (e.target === welcomePopup) closeWelcomePopup();
+});
+
+welcomeViewLocation.addEventListener('click', closeWelcomePopup);
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && welcomePopup.classList.contains('show')) closeWelcomePopup();
+});
 
 // Theme Toggle
 const themeToggle = document.getElementById('themeToggle');
