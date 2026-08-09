@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /index.txt
+Disallow: /generate_placeholders.py
+
+Sitemap: https://binshahzadfashion.com/sitemap.xml

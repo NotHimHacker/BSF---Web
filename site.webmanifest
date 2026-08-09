@@ -1,0 +1,17 @@
+{
+  "name": "Bin Shahzad Fashions",
+  "short_name": "Bin Shahzad",
+  "description": "Pakistani fashion shop in Al Ghuwair, Sharjah.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf8f2",
+  "theme_color": "#211917",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "1181x1181",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
